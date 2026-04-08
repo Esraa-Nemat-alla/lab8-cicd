@@ -1,25 +1,21 @@
 services:
   app:
-    image: esraarashad/esraa-lab6-app:latest
+    build: .
     ports:
       - "3000:3000"
     environment:
       DB_URL: mongodb://db:27017
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     restart: unless-stopped
 
   db:
     image: mongo:7
+    ports:
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
       - ./db/init.js:/docker-entrypoint-initdb.d/init.js:ro
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     restart: unless-stopped
 
 volumes:
